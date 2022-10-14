@@ -1,6 +1,7 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
+#include <algorithm>
 
 #include "piece.cc"
 #include "pawn.cc"
@@ -59,10 +60,36 @@ void Board::setup() {
 
 void Board::add_piece(Piece* piece) {
   pieces.push_back(piece);
-  map[piece->square.x][piece->square.y] = piece;
+  Board::set_square(piece->square, piece);
 }
 
 Piece* Board::access_square(const Square& square) const{
   assert(square.in_board());
   return map[square.x][square.y];
+}
+
+void Board::set_square(const Square& square, Piece* piece) {
+  assert(square.in_board());
+  map[square.x][square.y] = piece;
+}
+
+void Board::move(const Square& s1, const Square& s2) {
+  Piece* p1 = Board::access_square(s1);
+  Piece* p2 = Board::access_square(s2);
+  if (p2 != nullptr) {
+    delete p2;
+  }
+  Board::set_square(s1, nullptr);
+  Board::set_square(s2, p1);
+  p1->square = s2;
+}
+
+void Board::play_legal_move(const Square& s1, const Square& s2) {
+  assert(s1.in_board());
+  assert(s2.in_board());
+  Piece* p1 = Board::access_square(s1);
+  assert(p1 != nullptr);
+  std::vector<Square> legal_moves = p1->get_pseudo_legal_moves();
+  assert(std::find(legal_moves.begin(), legal_moves.end(), s2) != legal_moves.end());
+  Board::move(s1, s2);
 }

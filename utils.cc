@@ -16,6 +16,10 @@ struct Square {
     return std::to_string(x) + ' ';
   }
   
+  bool operator==(const Square& s1) {
+    return s1.x == x && s1.y == y;
+  }
+  
   bool in_board() const {
     return !(x<0 || y<0 || x>=8 || y>=8);
   }
