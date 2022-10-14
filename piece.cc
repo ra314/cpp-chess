@@ -1,11 +1,4 @@
-class Piece
-{ 
-  public:
-    // Origin is in the top left
-    int x;
-    int y;
-    // Character representation
-    const char symbol;
-    
-    Piece(int x, int y, char symbol): x(x), y(y), symbol(symbol) {}
-};
+#include "piece.h"
+#include "board.h"
+
+Piece::Piece(int x, int y, char symbol, Board* board): x(x), y(y), symbol(symbol), board(board) {}
