@@ -43,18 +43,18 @@ void Board::setup() {
   for (int y: {1,6}) {
     // Pawns
     for (int i=0; i<size; i++) {
-      add_piece(new Pawn(i, y, *this));
+      add_piece(new Pawn(i, y, *this, y==6));
     }
   }
   for (int y: {0,7}) {
-    add_piece(new Rook(0, y, *this));
-    add_piece(new Knight(1, y, *this));
-    add_piece(new Bishop(2, y, *this));
-    add_piece(new Queen(3, y, *this));
-    add_piece(new King(4, y, *this));
-    add_piece(new Bishop(5, y, *this));
-    add_piece(new Knight(6, y, *this));
-    add_piece(new Rook(7, y, *this));
+    add_piece(new Rook(0, y, *this, y==7));
+    add_piece(new Knight(1, y, *this, y==7));
+    add_piece(new Bishop(2, y, *this, y==7));
+    add_piece(new Queen(3, y, *this, y==7));
+    add_piece(new King(4, y, *this, y==7));
+    add_piece(new Bishop(5, y, *this, y==7));
+    add_piece(new Knight(6, y, *this, y==7));
+    add_piece(new Rook(7, y, *this, y==7));
   }
 }
 

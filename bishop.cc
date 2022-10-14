@@ -5,9 +5,9 @@ class Bishop : public Piece
   private:
     static const std::vector<Square> deltas;
   public:
-    Bishop(int x, int y, Board& board): Piece(x, y, 'B', board) {}
+    Bishop(int x, int y, Board& board, bool color): Piece(x, y, 'B', board, color) {}
     std::vector<Square> get_pseudo_legal_moves() const override{
-     // A bishop at most has 13 legal moves
+      // A bishop at most has 13 legal moves
       std::vector<Square> moves;
       moves.reserve(13);
       for (const Square& delta: deltas) {
