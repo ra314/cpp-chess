@@ -3,8 +3,7 @@
 class Rook : public Piece 
 { 
   private:
-    //TODO STATIC
-    std::vector<Square> deltas = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+    static const std::vector<Square> deltas;
   public:
     Rook(int x, int y, Board& board): Piece(x, y, 'R', board) {}
     std::vector<Square> get_pseudo_legal_moves() const override{
@@ -24,3 +23,5 @@ class Rook : public Piece
       return moves;
     }
 };
+
+const std::vector<Square> Rook::deltas({{0,1}, {0,-1}, {1,0}, {-1,0}});

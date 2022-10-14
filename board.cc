@@ -13,6 +13,12 @@
 Board::Board() {
   pieces.reserve(init_num_pieces);
 }
+
+Board::~Board() {
+  for (Piece* piece: pieces) {
+    delete piece;
+  }
+}
     
 Board::operator std::string() const {
   // +1 for the new line chars
@@ -23,11 +29,11 @@ Board::operator std::string() const {
     view[i] = '\n';
   }
   // Replace squares occupied by pieces with their respective characters
-  for (const Piece& piece: pieces) {
-    int target_index = piece.square.x+(piece.square.y*line_size);
+  for (const Piece* piece: pieces) {
+    int target_index = piece->square.x+(piece->square.y*line_size);
     // Check to make sure that no two pieces share the same square
     assert(view[target_index] == '*');
-    view[target_index] = piece.symbol;
+    view[target_index] = piece->symbol;
   }
   return view;
 }
@@ -52,7 +58,7 @@ void Board::setup() {
 }
 
 void Board::add_piece(Piece* piece) {
-  pieces.push_back(*piece);
+  pieces.push_back(piece);
   map[piece->square.x][piece->square.y] = piece;
 }
 
