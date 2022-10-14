@@ -2,6 +2,7 @@
 #include <cassert>
 #include <iostream>
 #include <algorithm>
+#include <set>
 
 #include "piece.cc"
 #include "pawn.cc"
@@ -11,9 +12,7 @@
 #include "queen.cc"
 #include "king.cc"
 
-Board::Board() {
-  pieces.reserve(init_num_pieces);
-}
+Board::Board() {}
 
 Board::~Board() {
   for (Piece* piece: pieces) {
@@ -59,7 +58,7 @@ void Board::setup() {
 }
 
 void Board::add_piece(Piece* piece) {
-  pieces.push_back(piece);
+  pieces.insert(piece);
   Board::set_square(piece->square, piece);
 }
 
@@ -77,6 +76,7 @@ void Board::move(const Square& s1, const Square& s2) {
   Piece* p1 = Board::access_square(s1);
   Piece* p2 = Board::access_square(s2);
   if (p2 != nullptr) {
+    pieces.erase(p2);
     delete p2;
   }
   Board::set_square(s1, nullptr);
@@ -92,4 +92,8 @@ void Board::play_legal_move(const Square& s1, const Square& s2) {
   std::vector<Square> legal_moves = p1->get_pseudo_legal_moves();
   assert(std::find(legal_moves.begin(), legal_moves.end(), s2) != legal_moves.end());
   Board::move(s1, s2);
+}
+
+void Board::play_legal_move(const std::string& move) {
+  Board::play_legal_move(move.substr(0,2), move.substr(2,2));
 }

@@ -11,7 +11,7 @@ class Bishop : public Piece
       std::vector<Square> moves;
       moves.reserve(13);
       for (const Square& delta: deltas) {
-        for (int i=0; i<8; i++) {
+        for (int i=1; i<8; i++) {
           Square move = (delta*i)+square;
           if (move.in_board() && board.access_square(move) == nullptr) {
             moves.push_back(move);
