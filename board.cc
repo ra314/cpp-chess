@@ -66,7 +66,7 @@ void Board::setup() {
 
 void Board::add_piece(Piece* piece) {
   pieces.insert(piece);
-  Board::set_square(piece->square, piece);
+  set_square(piece->square, piece);
 }
 
 Piece* Board::access_square(const Square& square) const{
@@ -99,7 +99,11 @@ void Board::move(const ChessMove& chess_move, bool delete_captured_piece) {
 
 void Board::undo_move(Piece* prev_captured_piece) {
   ChessMove& last_move = move_history.back();
-  set_square(last_move.start, access_square(last_move.end));
+  Piece* moved_piece = access_square(last_move.end);
+  moved_piece->times_moved--;
+  moved_piece->square = last_move.start;
+  set_square(last_move.start, moved_piece);
+  set_square(last_move.end, nullptr);
   if (prev_captured_piece != nullptr) {
     add_piece(prev_captured_piece);
   }
@@ -197,7 +201,6 @@ EvaluatedChessMove Board::minimax(int depth, int max_depth, int alpha, int beta)
     for (Piece* piece: pieces) {
       if (piece->color == is_white_turn()) {
         for (const Square& square: piece->get_pseudo_legal_moves()) {
-          std::cout << std::string(square) << std::endl;
           // Store the possibly capture piece. (this might be a nullptr if nothing was captured)
           Piece* captured_piece = access_square(square);
           // Perform the move
@@ -220,7 +223,6 @@ EvaluatedChessMove Board::minimax(int depth, int max_depth, int alpha, int beta)
     for (Piece* piece: pieces) {
       if (piece->color == is_white_turn()) {
         for (const Square& square: piece->get_pseudo_legal_moves()) {
-          std::cout << std::string(square) << std::endl;
           // Store the possibly capture piece. (this might be a nullptr if nothing was captured)
           Piece* captured_piece = access_square(square);
           // Perform the move
