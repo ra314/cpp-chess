@@ -110,16 +110,22 @@ void Board::play_legal_move_algebraic_notation(const std::string& move) {
   // Find all pieces that can move there this turn
   std::vector<Piece*> pieces_1;
   std::copy_if(Board::pieces.begin(), Board::pieces.end(), std::back_inserter(pieces_1), [&target_square](Piece* piece){return piece->can_move_to(target_square);});
+  // Limit to pawns or pieces
   std::vector<Piece*> pieces_2;
+  auto pawn_filter = [](Piece* piece){return piece->symbol=='P';};
+  auto piece_filter = [](Piece* piece){return piece->symbol!='P';};
+  std::copy_if(pieces_1.begin(), pieces_1.end(), std::back_inserter(pieces_2), std::islower(move[0]) ? pawn_filter : piece_filter);
+  // Filter chess pieces that start from the right file
   // eg: Rexe4 or Ree4
+  std::vector<Piece*> pieces_3;
   if (std::islower(move[1])) {
-    std::copy_if(pieces_1.begin(), pieces_1.end(), std::back_inserter(pieces_2), [&move](Piece* piece){return std::string(piece->square)[0]==move[1];});
+    std::copy_if(pieces_2.begin(), pieces_2.end(), std::back_inserter(pieces_3), [&move](Piece* piece){return std::string(piece->square)[0]==move[1];});
   }
   else {
-    pieces_2 = pieces_1;
+    pieces_3 = pieces_2;
   }
-  assert(pieces_2.size()==1);
-  Board::play_legal_move(pieces_2[0]->square, target_square);
+  assert(pieces_3.size()==1);
+  Board::play_legal_move(pieces_3[0]->square, target_square);
 }
 
 bool Board::is_white_turn() const {

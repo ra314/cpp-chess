@@ -22,6 +22,7 @@ int main() {
     board.play_legal_move_coordinate_notation("d1b3");
     */
     board.play_legal_move_algebraic_notation("e4");
+    board.play_legal_move_algebraic_notation("c6");
     std::cout << std::string(board);
     return 0;
 }
