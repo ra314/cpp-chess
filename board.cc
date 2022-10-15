@@ -101,7 +101,7 @@ void Board::play_legal_move_coordinate_notation(const std::string& move) {
 }
 
 void Board::play_legal_move_algebraic_notation(const std::string& move) {
-  Square target_square = move.substr(move.length()-1);
+  Square target_square = move.substr(move.length()-2);
   
   // eg: Bxc6 or dxc6 or Rexe4
   if (move.find("x") != std::string::npos) {
@@ -109,11 +109,11 @@ void Board::play_legal_move_algebraic_notation(const std::string& move) {
   }
   // Find all pieces that can move there this turn
   std::vector<Piece*> pieces_1;
-  std::copy_if(Board::pieces.begin(), Board::pieces.end(), pieces_1.begin(), [&target_square](Piece* piece){return piece->can_move_to(target_square);});
+  std::copy_if(Board::pieces.begin(), Board::pieces.end(), std::back_inserter(pieces_1), [&target_square](Piece* piece){return piece->can_move_to(target_square);});
   std::vector<Piece*> pieces_2;
   // eg: Rexe4 or Ree4
   if (std::islower(move[1])) {
-    std::copy_if(pieces_1.begin(), pieces_1.end(), pieces_2.begin(), [&move](Piece* piece){return std::string(piece->square)[0]==move[1];});
+    std::copy_if(pieces_1.begin(), pieces_1.end(), std::back_inserter(pieces_2), [&move](Piece* piece){return std::string(piece->square)[0]==move[1];});
   }
   else {
     pieces_2 = pieces_1;
