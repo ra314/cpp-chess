@@ -82,6 +82,7 @@ void Board::move(const Square& s1, const Square& s2) {
   Board::set_square(s1, nullptr);
   Board::set_square(s2, p1);
   p1->square = s2;
+  p1->times_moved++;
 }
 
 void Board::play_legal_move(const Square& s1, const Square& s2) {

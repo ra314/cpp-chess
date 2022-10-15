@@ -14,6 +14,7 @@ class Piece
     const Board& board;
     // true = white, false = black
     const bool color;
+    int times_moved=0;
     
     Piece(int x, int y, char symbol, Board& board, bool color);
     // Performs collision checks, but not CHECK checks
