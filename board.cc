@@ -108,24 +108,38 @@ void Board::play_legal_move_algebraic_notation(const std::string& move) {
     assert(Board::access_square(target_square) != nullptr);
   }
   // Find all pieces that can move there this turn
-  std::vector<Piece*> pieces_1;
-  std::copy_if(Board::pieces.begin(), Board::pieces.end(), std::back_inserter(pieces_1), [&target_square](Piece* piece){return piece->can_move_to(target_square);});
-  // Limit to pawns or pieces
-  std::vector<Piece*> pieces_2;
-  auto pawn_filter = [](Piece* piece){return piece->symbol=='P';};
-  auto piece_filter = [](Piece* piece){return piece->symbol!='P';};
-  std::copy_if(pieces_1.begin(), pieces_1.end(), std::back_inserter(pieces_2), std::islower(move[0]) ? pawn_filter : piece_filter);
-  // Filter chess pieces that start from the right file
-  // eg: Rexe4 or Ree4
-  std::vector<Piece*> pieces_3;
-  if (std::islower(move[1])) {
-    std::copy_if(pieces_2.begin(), pieces_2.end(), std::back_inserter(pieces_3), [&move](Piece* piece){return std::string(piece->square)[0]==move[1];});
+  std::vector<Piece*> pieces;
+  for (Piece* piece : Board::pieces) {
+    // Limit to the current color to play
+    if (piece->color != Board::is_white_turn()) {
+      continue;
+    }
+    // Limit to the right kind of piece to move
+    // If the first char is lower, then continue if the current piece is not a pawn
+    if (std::islower(move[0])) {
+      if (piece->symbol!='P') {
+        continue;
+      }
+    } // If the first char is upper, then if the first letter of the move isn't the same as the symbol of the piece, then continue
+    else if (move[0]!=piece->symbol) {
+      continue;
+    }
+    // Limit to pieces that can reach the target square
+    if (!piece->can_move_to(target_square)) {
+      continue;
+    }
+    // Filter chess pieces that start from the right file
+    // eg: Rexe4 or Ree4 or cxd5
+    if (move.size()>=4) {
+      char start_file = std::isupper(move[0]) ? move[1] : move[0];
+      if (std::string(piece->square)[0]!=start_file) {
+        continue;
+      }
+    }
+    pieces.push_back(piece);
   }
-  else {
-    pieces_3 = pieces_2;
-  }
-  assert(pieces_3.size()==1);
-  Board::play_legal_move(pieces_3[0]->square, target_square);
+  assert(pieces.size()==1);
+  Board::play_legal_move(pieces[0]->square, target_square);
 }
 
 bool Board::is_white_turn() const {

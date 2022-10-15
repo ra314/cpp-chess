@@ -1,4 +1,7 @@
 #include <iostream>
+#include <iomanip>
+#include <ranges>
+#include <string_view>
 #include "board.cc"
 
 int main() {
@@ -21,8 +24,16 @@ int main() {
     board.play_legal_move_coordinate_notation("c8g4");
     board.play_legal_move_coordinate_notation("d1b3");
     */
-    board.play_legal_move_algebraic_notation("e4");
-    board.play_legal_move_algebraic_notation("c6");
+    std::string game = "e4 c6 d4 d5 exd5 cxd5 Bd3 ";
+    std::string move;
+    for (auto x: game) {
+      if (x == ' ') {
+        board.play_legal_move_algebraic_notation(move);
+        move = "";
+      } else {
+        move += x;
+      }
+    }
     std::cout << std::string(board);
     return 0;
 }

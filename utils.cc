@@ -15,8 +15,8 @@ struct Square {
   }
   
   operator std::string() const {
-    //TODO FIX
-    return "e2";
+    // int('a') = 97 // int('1') = 49
+    return std::string(1, char(x+97)) + std::string(1, char((7-x)+49));
   }
   
   bool operator==(const Square& s1) {
