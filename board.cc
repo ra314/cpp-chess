@@ -16,6 +16,7 @@ Board::Board() {}
 
 Board::Board(const Board &obj) {
   ply_counter = obj.ply_counter;
+  move_history = obj.move_history;
   for (Piece* piece: obj.pieces) {
     add_piece(new Piece(*piece));
   }
@@ -82,15 +83,20 @@ void Board::set_square(const Square& square, Piece* piece) {
 void Board::move(const Square& s1, const Square& s2) {
   Piece* p1 = Board::access_square(s1);
   Piece* p2 = Board::access_square(s2);
+  
   if (p2 != nullptr) {
     pieces.erase(p2);
     delete p2;
   }
+  
   Board::set_square(s1, nullptr);
   Board::set_square(s2, p1);
+  
   p1->square = s2;
   p1->times_moved++;
   Board::ply_counter++;
+  
+  move_history.push_back({s1, s2});
 }
 
 void Board::play_legal_move(const Square& s1, const Square& s2) {
@@ -151,7 +157,51 @@ bool Board::is_white_turn() const {
   return Board::ply_counter%2 == 0;
 }
 
-std::array<Square, 2> Board::calc_ai_move() const {
-  // TODO fix this return statement.
-  return {(Square){1,1},(Square){2,2}};
+std::pair<int, std::array<Square, 2>> Board::calc_ai_move() const {
+  Board new_board = *this;
+  return new_board.minimax(0, 4, -1000, 1000);
+}
+
+int Board::eval_heuristic() const {
+  int eval = 0;
+  for (Piece* piece: pieces) {
+    if (piece->color) {
+      eval += piece->value;
+    } else {
+      eval -= piece->value;
+    }
+  }
+  return eval;
+}
+
+std::pair<int, std::array<Square, 2>> Board::minimax(int depth, int max_depth, int alpha, int beta) {
+  // TODO Order the moves from most promsing to least, to improve alpha beta search
+  
+  // Leaf node
+  if (depth == max_depth) {
+    return {eval_heuristic(), move_history[move_history.size()-1]};
+  }
+  
+  // Maximising player
+  if (is_white_turn()) {
+    std::pair<int, std::array<Square, 2>> best_valued_move = {1000, {{{-1,-1},{-1,-1}}}};
+    for (Piece* piece: pieces) {
+      if (piece->color == is_white_turn()) {
+        for (const Square& square: piece->get_pseudo_legal_moves()) {
+          std::pair<int, std::array<Square, 2>> valued_move = minimax(depth+1, max_depth, alpha, beta);
+          //best_val = std::max(best_valued_move, valued_move);
+          //alpha = std::max(alpha, best_valued_move);
+          //if (beta <= alpha) {
+          //  break;
+          //}
+        }
+      }
+    }
+    return best_valued_move;
+  } else {
+  
+  }
+  // SHOULD NOT REACH
+  assert(false);
+  return {0, {{{-1,-1},{-1,-1}}}};
 }

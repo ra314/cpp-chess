@@ -12,12 +12,16 @@ class Board
     std::set<Piece*> pieces;
     std::array<Piece*, 64> map = {};
     int ply_counter=0;
+    std::vector<std::array<Square, 2>> move_history;
     
     // Performs movement without any kind of checks
     void move(const Square& s1, const Square& s2);
     
     void set_square(const Square& square, Piece* piece);
     bool is_white_turn() const;
+    
+    std::pair<int, std::array<Square, 2>> minimax(int curr_depth, int max_depth, int alpha, int beta);
+    int eval_heuristic() const;
   
   public:
     Board();
@@ -34,5 +38,5 @@ class Board
     void play_legal_move_coordinate_notation(const std::string& move);
     void play_legal_move_algebraic_notation(const std::string& move);
     
-    std::array<Square, 2> calc_ai_move() const;
+    std::pair<int, std::array<Square, 2>> calc_ai_move() const;
 };
