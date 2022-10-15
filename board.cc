@@ -15,7 +15,6 @@
 Board::Board() {}
 
 Board::Board(const Board &obj) {
-  ply_counter = obj.ply_counter;
   move_history = obj.move_history;
   for (Piece* piece: obj.pieces) {
     add_piece(piece->copy());
@@ -80,11 +79,11 @@ void Board::set_square(const Square& square, Piece* piece) {
   map[square.x+(square.y*8)] = piece;
 }
 
-void Board::move(const ChessMove& chess_move) {
+void Board::move(const ChessMove& chess_move, bool delete_captured_piece) {
   Piece* p1 = Board::access_square(chess_move.start);
   Piece* p2 = Board::access_square(chess_move.end);
   
-  if (p2 != nullptr) {
+  if (p2 != nullptr && delete_captured_piece) {
     pieces.erase(p2);
     delete p2;
   }
@@ -94,9 +93,17 @@ void Board::move(const ChessMove& chess_move) {
   
   p1->square = chess_move.end;
   p1->times_moved++;
-  Board::ply_counter++;
   
   move_history.push_back({chess_move.start, chess_move.end});
+}
+
+void Board::undo_move(Piece* prev_captured_piece) {
+  ChessMove& last_move = move_history.back();
+  set_square(last_move.start, access_square(last_move.end));
+  if (prev_captured_piece != nullptr) {
+    add_piece(prev_captured_piece);
+  }
+  move_history.pop_back();
 }
 
 void Board::play_legal_move(const ChessMove& chess_move) {
@@ -104,7 +111,7 @@ void Board::play_legal_move(const ChessMove& chess_move) {
   Piece* p1 = Board::access_square(chess_move.start);
   assert(p1 != nullptr);
   assert(p1->can_move_to(chess_move.end));
-  Board::move(chess_move);
+  Board::move(chess_move, true /*delete captured piece*/);
 }
 
 void Board::play_legal_move_coordinate_notation(const std::string& move) {
@@ -154,7 +161,7 @@ void Board::play_legal_move_algebraic_notation(const std::string& move) {
 }
 
 bool Board::is_white_turn() const {
-  return Board::ply_counter%2 == 0;
+  return move_history.size()%2 == 0;
 }
 
 EvaluatedChessMove Board::calc_ai_move(int max_depth) const {
@@ -174,6 +181,8 @@ int Board::eval_heuristic() const {
   return eval;
 }
 
+
+
 EvaluatedChessMove Board::minimax(int depth, int max_depth, int alpha, int beta) {
   // TODO Order the moves from most promsing to least, to improve alpha beta search
   
@@ -189,7 +198,14 @@ EvaluatedChessMove Board::minimax(int depth, int max_depth, int alpha, int beta)
       if (piece->color == is_white_turn()) {
         for (const Square& square: piece->get_pseudo_legal_moves()) {
           std::cout << std::string(square) << std::endl;
+          // Store the possibly capture piece. (this might be a nullptr if nothing was captured)
+          Piece* captured_piece = access_square(square);
+          // Perform the move
+          move({piece->square, square}, false /*delete captured piece*/);
+          // Recursive call
           EvaluatedChessMove valued_move = minimax(depth+1, max_depth, alpha, beta);
+          // Undo the move
+          undo_move(captured_piece);
           best_valued_move = std::max(best_valued_move, valued_move);
           alpha = std::max(alpha, best_valued_move.eval);
           if (beta <= alpha) {
@@ -205,7 +221,14 @@ EvaluatedChessMove Board::minimax(int depth, int max_depth, int alpha, int beta)
       if (piece->color == is_white_turn()) {
         for (const Square& square: piece->get_pseudo_legal_moves()) {
           std::cout << std::string(square) << std::endl;
+          // Store the possibly capture piece. (this might be a nullptr if nothing was captured)
+          Piece* captured_piece = access_square(square);
+          // Perform the move
+          move({piece->square, square}, false /*delete captured piece*/);
+          // Recursive call
           EvaluatedChessMove valued_move = minimax(depth+1, max_depth, alpha, beta);
+          // Undo the move
+          undo_move(captured_piece);
           best_valued_move = std::min(best_valued_move, valued_move);
           beta = std::min(beta, best_valued_move.eval);
           if (beta <= alpha) {

@@ -11,11 +11,11 @@ class Board
     const int init_num_pieces = 32;
     std::set<Piece*> pieces;
     std::array<Piece*, 64> map = {};
-    int ply_counter=0;
     std::vector<ChessMove> move_history;
     
     // Performs movement without any kind of checks
-    void move(const ChessMove& chess_move);
+    void move(const ChessMove& chess_move, bool delete_captured_piece);
+    void undo_move(Piece* prev_captured_piece);
     
     void set_square(const Square& square, Piece* piece);
     bool is_white_turn() const;
