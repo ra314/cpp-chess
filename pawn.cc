@@ -3,6 +3,8 @@
 class Pawn : public Piece 
 {
   public:
+    Piece *copy() const {return new Pawn(*this);}
+    
     Pawn(int x, int y, Board& board, bool color): Piece(x, y, 'P', board, color, 1) {}
     std::vector<Square> get_pseudo_legal_moves() const override{
       // A pawn at most has 4 legal moves

@@ -5,6 +5,8 @@ class King : public Piece
   private:
     static const std::vector<Square> deltas;
   public:
+    Piece *copy() const {return new King(*this);}
+    
     King(int x, int y, Board& board, bool color): Piece(x, y, 'K', board, color, 1000) {}
     std::vector<Square> get_pseudo_legal_moves() const override{
       // A king at most has 8 legal moves

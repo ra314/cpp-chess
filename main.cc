@@ -19,7 +19,8 @@ int main() {
         move += x;
       }
     }
-    std::cout << std::string(board);
+    std::cout << std::string(board) << std::endl;
+    std::cout << std::string(board.calc_ai_move()) << std::endl;
     return 0;
 }
 

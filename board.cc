@@ -18,7 +18,7 @@ Board::Board(const Board &obj) {
   ply_counter = obj.ply_counter;
   move_history = obj.move_history;
   for (Piece* piece: obj.pieces) {
-    add_piece(new Piece(*piece));
+    add_piece(piece->copy());
   }
 }
 

@@ -48,4 +48,9 @@ struct EvaluatedChessMove {
   bool operator<(const EvaluatedChessMove& rhs) const {
     return eval < rhs.eval;
   }
+  operator std::string() const {
+    std::string s1 = chess_move[0];
+    std::string s2 = chess_move[1];
+    return std::to_string(eval) + " " + s1 + "," + "s2";
+  }
 };

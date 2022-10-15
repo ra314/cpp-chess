@@ -5,6 +5,8 @@ class Bishop : public Piece
   private:
     static const std::vector<Square> deltas;
   public:
+    Piece *copy() const {return new Bishop(*this);}
+    
     Bishop(int x, int y, Board& board, bool color): Piece(x, y, 'B', board, color, 3) {}
     std::vector<Square> get_pseudo_legal_moves() const override{
       // A bishop at most has 13 legal moves
