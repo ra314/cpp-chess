@@ -80,35 +80,35 @@ void Board::set_square(const Square& square, Piece* piece) {
   map[square.x+(square.y*8)] = piece;
 }
 
-void Board::move(const Square& s1, const Square& s2) {
-  Piece* p1 = Board::access_square(s1);
-  Piece* p2 = Board::access_square(s2);
+void Board::move(const ChessMove& chess_move) {
+  Piece* p1 = Board::access_square(chess_move[0]);
+  Piece* p2 = Board::access_square(chess_move[1]);
   
   if (p2 != nullptr) {
     pieces.erase(p2);
     delete p2;
   }
   
-  Board::set_square(s1, nullptr);
-  Board::set_square(s2, p1);
+  Board::set_square(chess_move[0], nullptr);
+  Board::set_square(chess_move[1], p1);
   
-  p1->square = s2;
+  p1->square = chess_move[1];
   p1->times_moved++;
   Board::ply_counter++;
   
-  move_history.push_back({s1, s2});
+  move_history.push_back({chess_move[0], chess_move[1]});
 }
 
-void Board::play_legal_move(const Square& s1, const Square& s2) {
-  assert(s1.in_board());
-  Piece* p1 = Board::access_square(s1);
+void Board::play_legal_move(const ChessMove& chess_move) {
+  assert(chess_move[0].in_board());
+  Piece* p1 = Board::access_square(chess_move[0]);
   assert(p1 != nullptr);
-  assert(p1->can_move_to(s2));
-  Board::move(s1, s2);
+  assert(p1->can_move_to(chess_move[1]));
+  Board::move({{chess_move[0], chess_move[1]}});
 }
 
 void Board::play_legal_move_coordinate_notation(const std::string& move) {
-  Board::play_legal_move(move.substr(0,2), move.substr(2,2));
+  Board::play_legal_move({{move.substr(0,2), move.substr(2,2)}});
 }
 
 void Board::play_legal_move_algebraic_notation(const std::string& move) {
@@ -150,14 +150,14 @@ void Board::play_legal_move_algebraic_notation(const std::string& move) {
     pieces.push_back(piece);
   }
   assert(pieces.size()==1);
-  Board::play_legal_move(pieces[0]->square, target_square);
+  Board::play_legal_move({{pieces[0]->square, target_square}});
 }
 
 bool Board::is_white_turn() const {
   return Board::ply_counter%2 == 0;
 }
 
-std::pair<int, std::array<Square, 2>> Board::calc_ai_move() const {
+EvaluatedChessMove Board::calc_ai_move() const {
   Board new_board = *this;
   return new_board.minimax(0, 4, -1000, 1000);
 }
@@ -174,7 +174,7 @@ int Board::eval_heuristic() const {
   return eval;
 }
 
-std::pair<int, std::array<Square, 2>> Board::minimax(int depth, int max_depth, int alpha, int beta) {
+EvaluatedChessMove Board::minimax(int depth, int max_depth, int alpha, int beta) {
   // TODO Order the moves from most promsing to least, to improve alpha beta search
   
   // Leaf node
@@ -184,11 +184,11 @@ std::pair<int, std::array<Square, 2>> Board::minimax(int depth, int max_depth, i
   
   // Maximising player
   if (is_white_turn()) {
-    std::pair<int, std::array<Square, 2>> best_valued_move = {1000, {{{-1,-1},{-1,-1}}}};
+    EvaluatedChessMove best_valued_move = {1000, {{{-1,-1},{-1,-1}}}};
     for (Piece* piece: pieces) {
       if (piece->color == is_white_turn()) {
         for (const Square& square: piece->get_pseudo_legal_moves()) {
-          std::pair<int, std::array<Square, 2>> valued_move = minimax(depth+1, max_depth, alpha, beta);
+          EvaluatedChessMove valued_move = minimax(depth+1, max_depth, alpha, beta);
           //best_val = std::max(best_valued_move, valued_move);
           //alpha = std::max(alpha, best_valued_move);
           //if (beta <= alpha) {

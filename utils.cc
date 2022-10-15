@@ -39,3 +39,13 @@ struct Square {
     y = 7-(int(square[1])-49);
   }
 };
+
+typedef std::array<Square, 2> ChessMove;
+
+struct EvaluatedChessMove {
+  int eval;
+  ChessMove chess_move;
+  bool operator<(const EvaluatedChessMove& rhs) {
+    return eval < rhs.eval;
+  }
+};
