@@ -2,6 +2,10 @@
 
 class Pawn : public Piece 
 {
+  private:
+    bool is_at_start() {
+      return (color && y==6) || (!color && y==1);
+    }
   public:
     Pawn(int x, int y, Board& board, bool color): Piece(x, y, 'P', board, color) {}
     std::vector<Square> get_pseudo_legal_moves() const override{
@@ -19,13 +23,15 @@ class Pawn : public Piece
           }
         }
       }
-      for (int i=1; i<=2; i++) {
-        Square move = ((Square){0, delta_y*i})+square;
-        if (move.in_board() && board.access_square(move) == nullptr) {
-          moves.push_back(move);
-          continue;
+      Square move_1 = ((Square){0, delta_y})+square;
+      if (move.in_board() && board.access_square(move_1) == nullptr) {
+        moves.push_back(move_1);
+        if (is_at_start()) {
+          Square move_2 = ((Square){0, delta_y})+square;
+          if (board.access_square(move_2) == nullptr) {
+            moves.push_back(move2);
+          }
         }
-        break;
       }
       return moves;
     }
