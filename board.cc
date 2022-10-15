@@ -90,9 +90,7 @@ void Board::play_legal_move(const Square& s1, const Square& s2) {
   assert(s1.in_board());
   Piece* p1 = Board::access_square(s1);
   assert(p1 != nullptr);
-  std::vector<Square> legal_moves = p1->get_pseudo_legal_moves();
-  assert(std::find(legal_moves.begin(), legal_moves.end(), s2) != legal_moves.end());
-  // TODO replace with piece::can_move_to
+  assert(p1->can_move_to(s2));
   Board::move(s1, s2);
 }
 
@@ -144,4 +142,9 @@ void Board::play_legal_move_algebraic_notation(const std::string& move) {
 
 bool Board::is_white_turn() const {
   return Board::ply_counter%2 == 0;
+}
+
+std::array<Square, 2> Board::calc_ai_move() const {
+  // TODO fix this return statement.
+  return {(Square){1,1},(Square){2,2}};
 }
