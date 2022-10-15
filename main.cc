@@ -20,7 +20,10 @@ int main() {
       }
     }
     std::cout << std::string(board) << std::endl;
-    std::cout << std::string(board.calc_ai_move(5)) << std::endl;
+    std::cout << std::string(board.calc_ai_move(6)) << std::endl;
+    // I only managed depth 5 with an implementation similar to how I did it in godot.
+    // Guess the language doesn't make that big of a difference.
+    // Move ordering made it a bit faster
     return 0;
 }
 

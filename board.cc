@@ -187,11 +187,25 @@ int Board::eval_heuristic() const {
   return eval;
 }
 
-
+std::vector<ChessMove> Board::get_all_moves_ordered() const {
+  std::vector<ChessMove> capture_moves;
+  std::vector<ChessMove> quiet_moves;
+  for (Piece* piece: pieces) {
+    if (piece->color == is_white_turn()) {
+      for (const Square& square: piece->get_pseudo_legal_moves()) {
+        if (access_square(square) != nullptr) {
+          capture_moves.push_back({piece->square, square});
+        } else {
+          quiet_moves.push_back({piece->square, square});
+        }
+      }
+    }
+  }
+  capture_moves.insert(capture_moves.end(), quiet_moves.begin(), quiet_moves.end());
+  return capture_moves;
+}
 
 EvaluatedChessMove Board::minimax(int depth, int max_depth, int alpha, int beta) {
-  // TODO Order the moves from most promsing to least, to improve alpha beta search
-  
   // Leaf node
   if (depth == max_depth) {
     return {eval_heuristic(), move_history[move_history.size()-1]};
@@ -200,45 +214,37 @@ EvaluatedChessMove Board::minimax(int depth, int max_depth, int alpha, int beta)
   // Maximising player
   if (is_white_turn()) {
     EvaluatedChessMove best_valued_move = {-1000, {{-1,-1},{-1,-1}}};
-    for (Piece* piece: pieces) {
-      if (piece->color == is_white_turn()) {
-        for (const Square& square: piece->get_pseudo_legal_moves()) {
-          // Store the possibly capture piece. (this might be a nullptr if nothing was captured)
-          Piece* captured_piece = access_square(square);
-          // Perform the move
-          move({piece->square, square}, false /*delete captured piece*/);
-          // Recursive call
-          EvaluatedChessMove valued_move = minimax(depth+1, max_depth, alpha, beta);
-          // Undo the move
-          undo_move(captured_piece);
-          best_valued_move = std::max(best_valued_move, valued_move);
-          alpha = std::max(alpha, best_valued_move.eval);
-          if (beta <= alpha) {
-            break;
-          }
-        }
+    for (ChessMove& chess_move: get_all_moves_ordered()) {
+      // Store the possibly capture piece. (this might be a nullptr if nothing was captured)
+      Piece* captured_piece = access_square(chess_move.end);
+      // Perform the move
+      move(chess_move, false /*delete captured piece*/);
+      // Recursive call
+      EvaluatedChessMove valued_move = minimax(depth+1, max_depth, alpha, beta);
+      // Undo the move
+      undo_move(captured_piece);
+      best_valued_move = std::max(best_valued_move, valued_move);
+      alpha = std::max(alpha, best_valued_move.eval);
+      if (beta <= alpha) {
+        break;
       }
     }
     return best_valued_move;
   } else {
     EvaluatedChessMove best_valued_move = {1000, {{-1,-1},{-1,-1}}};
-    for (Piece* piece: pieces) {
-      if (piece->color == is_white_turn()) {
-        for (const Square& square: piece->get_pseudo_legal_moves()) {
-          // Store the possibly capture piece. (this might be a nullptr if nothing was captured)
-          Piece* captured_piece = access_square(square);
-          // Perform the move
-          move({piece->square, square}, false /*delete captured piece*/);
-          // Recursive call
-          EvaluatedChessMove valued_move = minimax(depth+1, max_depth, alpha, beta);
-          // Undo the move
-          undo_move(captured_piece);
-          best_valued_move = std::min(best_valued_move, valued_move);
-          beta = std::min(beta, best_valued_move.eval);
-          if (beta <= alpha) {
-            break;
-          }
-        }
+    for (ChessMove& chess_move: get_all_moves_ordered()) {
+      // Store the possibly capture piece. (this might be a nullptr if nothing was captured)
+      Piece* captured_piece = access_square(chess_move.end);
+      // Perform the move
+      move(chess_move, false /*delete captured piece*/);
+      // Recursive call
+      EvaluatedChessMove valued_move = minimax(depth+1, max_depth, alpha, beta);
+      // Undo the move
+      undo_move(captured_piece);
+      best_valued_move = std::min(best_valued_move, valued_move);
+      beta = std::min(beta, best_valued_move.eval);
+      if (beta <= alpha) {
+        break;
       }
     }
     return best_valued_move;

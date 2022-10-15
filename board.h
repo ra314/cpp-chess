@@ -22,6 +22,7 @@ class Board
     
     EvaluatedChessMove minimax(int curr_depth, int max_depth, int alpha, int beta);
     int eval_heuristic() const;
+    std::vector<ChessMove> get_all_moves_ordered() const;
   
   public:
     Board();
