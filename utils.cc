@@ -45,7 +45,7 @@ typedef std::array<Square, 2> ChessMove;
 struct EvaluatedChessMove {
   int eval;
   ChessMove chess_move;
-  bool operator<(const EvaluatedChessMove& rhs) {
+  bool operator<(const EvaluatedChessMove& rhs) const {
     return eval < rhs.eval;
   }
 };

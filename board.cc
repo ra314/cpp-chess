@@ -184,22 +184,35 @@ EvaluatedChessMove Board::minimax(int depth, int max_depth, int alpha, int beta)
   
   // Maximising player
   if (is_white_turn()) {
-    EvaluatedChessMove best_valued_move = {1000, {{{-1,-1},{-1,-1}}}};
+    EvaluatedChessMove best_valued_move = {-1000, {{{-1,-1},{-1,-1}}}};
     for (Piece* piece: pieces) {
       if (piece->color == is_white_turn()) {
         for (const Square& square: piece->get_pseudo_legal_moves()) {
           EvaluatedChessMove valued_move = minimax(depth+1, max_depth, alpha, beta);
-          //best_val = std::max(best_valued_move, valued_move);
-          //alpha = std::max(alpha, best_valued_move);
-          //if (beta <= alpha) {
-          //  break;
-          //}
+          best_valued_move = std::max(best_valued_move, valued_move);
+          alpha = std::max(alpha, best_valued_move.eval);
+          if (beta <= alpha) {
+            break;
+          }
         }
       }
     }
     return best_valued_move;
   } else {
-  
+    EvaluatedChessMove best_valued_move = {1000, {{{-1,-1},{-1,-1}}}};
+    for (Piece* piece: pieces) {
+      if (piece->color == is_white_turn()) {
+        for (const Square& square: piece->get_pseudo_legal_moves()) {
+          EvaluatedChessMove valued_move = minimax(depth+1, max_depth, alpha, beta);
+          best_valued_move = std::min(best_valued_move, valued_move);
+          beta = std::min(beta, best_valued_move.eval);
+          if (beta <= alpha) {
+            break;
+          }
+        }
+      }
+    }
+    return best_valued_move;
   }
   // SHOULD NOT REACH
   assert(false);
