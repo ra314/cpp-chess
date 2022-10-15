@@ -83,18 +83,45 @@ void Board::move(const Square& s1, const Square& s2) {
   Board::set_square(s2, p1);
   p1->square = s2;
   p1->times_moved++;
+  Board::ply_counter++;
 }
 
 void Board::play_legal_move(const Square& s1, const Square& s2) {
   assert(s1.in_board());
-  assert(s2.in_board());
   Piece* p1 = Board::access_square(s1);
   assert(p1 != nullptr);
   std::vector<Square> legal_moves = p1->get_pseudo_legal_moves();
   assert(std::find(legal_moves.begin(), legal_moves.end(), s2) != legal_moves.end());
+  // TODO replace with piece::can_move_to
   Board::move(s1, s2);
 }
 
-void Board::play_legal_move(const std::string& move) {
+void Board::play_legal_move_coordinate_notation(const std::string& move) {
   Board::play_legal_move(move.substr(0,2), move.substr(2,2));
+}
+
+void Board::play_legal_move_algebraic_notation(const std::string& move) {
+  Square target_square = move.substr(move.length()-1);
+  
+  // eg: Bxc6 or dxc6 or Rexe4
+  if (move.find("x") != std::string::npos) {
+    assert(Board::access_square(target_square) != nullptr);
+  }
+  // Find all pieces that can move there this turn
+  std::vector<Piece*> pieces_1;
+  std::copy_if(Board::pieces.begin(), Board::pieces.end(), pieces_1.begin(), [&target_square](Piece* piece){return piece->can_move_to(target_square);});
+  std::vector<Piece*> pieces_2;
+  // eg: Rexe4 or Ree4
+  if (std::islower(move[1])) {
+    std::copy_if(pieces_1.begin(), pieces_1.end(), pieces_2.begin(), [&move](Piece* piece){return std::string(piece->square)[0]==move[1];});
+  }
+  else {
+    pieces_2 = pieces_1;
+  }
+  assert(pieces_2.size()==1);
+  Board::play_legal_move(pieces_2[0]->square, target_square);
+}
+
+bool Board::is_white_turn() const {
+  return Board::ply_counter%2 == 0;
 }

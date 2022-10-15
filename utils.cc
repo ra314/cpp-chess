@@ -15,7 +15,8 @@ struct Square {
   }
   
   operator std::string() const {
-    return "(" + std::to_string(x) + "," + std::to_string(y) + ")";
+    //TODO FIX
+    return "e2";
   }
   
   bool operator==(const Square& s1) {

@@ -4,6 +4,13 @@
 Piece::Piece(int x, int y, char symbol, Board& board, bool color): square((Square){x,y}), symbol(symbol), board(board), color(color) {}
 
 std::vector<Square> Piece::get_pseudo_legal_moves() const {
-  std::vector<Square> moves;
+  // SHOULD NOT BE CALLED IN PARENT
+  assert(false);
+  std::vector<Square> moves;  
   return moves;
+}
+
+bool Piece::can_move_to(Square& square) const {
+  std::vector<Square> legal_moves = Piece::get_pseudo_legal_moves();
+  return (std::find(legal_moves.begin(), legal_moves.end(), square) != legal_moves.end());
 }

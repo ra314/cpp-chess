@@ -19,4 +19,5 @@ class Piece
     Piece(int x, int y, char symbol, Board& board, bool color);
     // Performs collision checks, but not CHECK checks
     virtual std::vector<Square> get_pseudo_legal_moves() const;
+    bool can_move_to(Square& square) const;
 };
