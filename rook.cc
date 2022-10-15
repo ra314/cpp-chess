@@ -5,7 +5,7 @@ class Rook : public Piece
   private:
     static const std::vector<Square> deltas;
   public:
-    Rook(int x, int y, Board& board, bool color): Piece(x, y, 'R', board, color) {}
+    Rook(int x, int y, Board& board, bool color): Piece(x, y, 'R', board, color, 5) {}
     std::vector<Square> get_pseudo_legal_moves() const override{
       // A rook at most has 14 legal moves
       std::vector<Square> moves;

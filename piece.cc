@@ -1,7 +1,7 @@
 #include "piece.h"
 #include "board.h"
 
-Piece::Piece(int x, int y, char symbol, Board& board, bool color): square((Square){x,y}), symbol(symbol), board(board), color(color) {}
+Piece::Piece(int x, int y, char symbol, Board& board, bool color, int value): square((Square){x,y}), symbol(symbol), board(board), color(color), value(value) {}
 
 std::vector<Square> Piece::get_pseudo_legal_moves() const {
   // SHOULD NOT BE CALLED IN PARENT

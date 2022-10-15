@@ -5,7 +5,7 @@ class Queen : public Piece
   private:
     static const std::vector<Square> deltas;
   public:
-    Queen(int x, int y, Board& board, bool color): Piece(x, y, 'Q', board, color) {}
+    Queen(int x, int y, Board& board, bool color): Piece(x, y, 'Q', board, color, 9) {}
     std::vector<Square> get_pseudo_legal_moves() const override{
       // A bishop at most has 13 legal moves
       // A rook at most has 14 legal moves
