@@ -40,7 +40,13 @@ struct Square {
   }
 };
 
-typedef std::array<Square, 2> ChessMove;
+struct ChessMove {
+  Square start;
+  Square end;
+  operator std::string() const {
+    return std::string(start) + "," + std::string(end);
+  }
+};
 
 struct EvaluatedChessMove {
   int eval;
@@ -49,8 +55,6 @@ struct EvaluatedChessMove {
     return eval < rhs.eval;
   }
   operator std::string() const {
-    std::string s1 = chess_move[0];
-    std::string s2 = chess_move[1];
-    return std::to_string(eval) + " " + s1 + "," + "s2";
+    return std::to_string(eval) + " " + std::string(chess_move);
   }
 };

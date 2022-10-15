@@ -38,5 +38,5 @@ class Board
     void play_legal_move_coordinate_notation(const std::string& move);
     void play_legal_move_algebraic_notation(const std::string& move);
     
-    EvaluatedChessMove calc_ai_move() const;
+    EvaluatedChessMove calc_ai_move(int max_depth) const;
 };
