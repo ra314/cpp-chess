@@ -10,7 +10,7 @@ class Board
     static const int size = 8;
     const int init_num_pieces = 32;
     std::set<Piece*> pieces;
-    Piece *map[size][size] = {};
+    std::array<Piece*, 64> map = {};
     int ply_counter=0;
     // Performs movement without any kind of checks
     void move(const Square& s1, const Square& s2);
@@ -27,4 +27,5 @@ class Board
     void play_legal_move(const Square& s1, const Square& s2);
     void play_legal_move_coordinate_notation(const std::string& move);
     void play_legal_move_algebraic_notation(const std::string& move);
+    std::array<Square, 2> calc_ai_move() const;
 };

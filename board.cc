@@ -64,12 +64,12 @@ void Board::add_piece(Piece* piece) {
 
 Piece* Board::access_square(const Square& square) const{
   assert(square.in_board());
-  return map[square.x][square.y];
+  return map[square.x+(square.y*8)];
 }
 
 void Board::set_square(const Square& square, Piece* piece) {
   assert(square.in_board());
-  map[square.x][square.y] = piece;
+  map[square.x+(square.y*8)] = piece;
 }
 
 void Board::move(const Square& s1, const Square& s2) {
