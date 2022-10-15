@@ -14,9 +14,21 @@ class Queen : public Piece
       for (const Square& delta: deltas) {
         for (int i=1; i<8; i++) {
           Square move = (delta*i)+square;
-          if (move.in_board() && board.access_square(move) == nullptr) {
-            moves.push_back(move);
-            continue;
+          if (move.in_board()) {
+            Piece* piece_on_target_square = board.access_square(move);
+            // Add move if the square is empty, and keep looking in that direction
+            if (piece_on_target_square == nullptr) {
+              moves.push_back(move);
+              continue;
+            }
+            // Add move if the square is occupied by the enemy, and stop looking in the direction
+            else if (piece_on_target_square->color != color) {
+              moves.push_back(move);
+              break;
+            // If the square is occupied by a friendly, stop looking in that direction
+            } else {
+              break;
+            }
           }
           break;
         }

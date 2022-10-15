@@ -12,12 +12,18 @@ class King : public Piece
       moves.reserve(8);
       for (const Square& delta: deltas) {
         Square move = delta+square;
-        if (move.in_board() && board.access_square(move) == nullptr) {
-          moves.push_back(move);
-          continue;
+        if (move.in_board()) {
+          Piece* piece_on_target_square = board.access_square(move);
+          // Add move if the square is empty
+          if (piece_on_target_square==nullptr) {
+            moves.push_back(move);
+          }
+          // Add move if the square contains enemy
+          else if (piece_on_target_square->color != color) {
+            moves.push_back(move);
+          }
         }
-        break;
-      } 
+      }
       return moves;
     }
 };

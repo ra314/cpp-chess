@@ -7,3 +7,11 @@ Goals
 ** Checkmate
 ** Check
 ** Promotion
+
+TODO:
+Prevent self capture.
+Allow capture for non pawn pieces.
+Enable castling
+Enable enpassent
+
+- Alpha beta pruning here we come

@@ -11,8 +11,12 @@ class Pawn : public Piece
       int delta_y = color ? -1 : 1;
       for (int delta_x: {-1, 1}) {  
         Square move = ((Square){delta_x, delta_y})+square;
-        if (move.in_board() && board.access_square(move) != nullptr) {
-          moves.push_back(move);
+        if (move.in_board()) {
+          Piece* piece_on_target_square = board.access_square(move);
+          // Add move if the square is contains enemy
+          if (piece_on_target_square!=nullptr && piece_on_target_square->color != color) {
+            moves.push_back(move);
+          }
         }
       }
       for (int i=1; i<=2; i++) {
