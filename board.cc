@@ -14,6 +14,13 @@
 
 Board::Board() {}
 
+Board::Board(const Board &obj) {
+  ply_counter = obj.ply_counter;
+  for (Piece* piece: obj.pieces) {
+    add_piece(new Piece(*piece));
+  }
+}
+
 Board::~Board() {
   for (Piece* piece: pieces) {
     delete piece;
