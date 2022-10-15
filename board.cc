@@ -83,9 +83,11 @@ void Board::move(const ChessMove& chess_move, bool delete_captured_piece) {
   Piece* p1 = Board::access_square(chess_move.start);
   Piece* p2 = Board::access_square(chess_move.end);
   
-  if (p2 != nullptr && delete_captured_piece) {
+  if (p2 != nullptr) {
     pieces.erase(p2);
-    delete p2;
+    if (delete_captured_piece) {
+      delete p2;
+    }
   }
   
   Board::set_square(chess_move.start, nullptr);

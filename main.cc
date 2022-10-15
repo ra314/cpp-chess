@@ -20,7 +20,7 @@ int main() {
       }
     }
     std::cout << std::string(board) << std::endl;
-    std::cout << std::string(board.calc_ai_move(4)) << std::endl;
+    std::cout << std::string(board.calc_ai_move(5)) << std::endl;
     return 0;
 }
 
