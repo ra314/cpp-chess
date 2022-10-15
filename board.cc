@@ -179,7 +179,6 @@ EvaluatedChessMove Board::minimax(int depth, int max_depth, int alpha, int beta)
   
   // Leaf node
   if (depth == max_depth) {
-    std::cout << std::string(move_history[move_history.size()-1]) << std::endl;
     return {eval_heuristic(), move_history[move_history.size()-1]};
   }
   
